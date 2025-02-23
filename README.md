@@ -1,46 +1,82 @@
-Based on the paper [Gompertz Linear Units: Leveraging Asymmetry for Enhanced Learning Dynamics](https://arxiv.org/abs/2502.03654)
+# GoLU Triton
 
+Based on the paper [Gompertz Linear Units: Leveraging Asymmetry for Enhanced Learning Dynamics](https://arxiv.org/abs/2502.03654)
 This is largely a port of the [automl GoLu cuda kernel](https://github.com/automl/GoLU/tree/main)
 
-# Sample GoLU Triton Benchmark (triton_bench.py)
+## Overview
 
-| Size | Batch | Fwd(μs) | Bwd(μs) |
-|------|-------|---------|---------|
-| 128  | 1     | 3.90    | 9.21    |
-| 128  | 32    | 4.51    | 9.09    |
-| 128  | 64    | 4.02    | 8.90    |
-| 128  | 128   | 4.83    | 10.21   |
-| 128  | 256   | 5.37    | 11.54   |
-| 128  | 512   | 7.33    | 14.63   |
-| 256  | 1     | 3.60    | 7.92    |
-| 256  | 32    | 4.17    | 8.90    |
-| 256  | 64    | 4.79    | 10.15   |
-| 256  | 128   | 5.56    | 11.42   |
-| 256  | 256   | 7.26    | 14.71   |
-| 256  | 512   | 10.74   | 21.53   |
-| 512  | 1     | 3.54    | 7.89    |
-| 512  | 32    | 4.32    | 10.04   |
-| 512  | 64    | 5.19    | 11.79   |
-| 512  | 128   | 6.99    | 14.96   |
-| 512  | 256   | 10.50   | 21.88   |
-| 512  | 512   | 12.15   | 29.40   |
-| 1024 | 1     | 3.52    | 7.84    |
-| 1024 | 32    | 5.24    | 11.01   |
-| 1024 | 64    | 7.04    | 14.27   |
-| 1024 | 128   | 10.46   | 21.76   |
-| 1024 | 256   | 12.27   | 30.40   |
-| 1024 | 512   | 18.89   | 62.29   |
-| 2048 | 1     | 3.73    | 8.02    |
-| 2048 | 32    | 7.28    | 14.81   |
-| 2048 | 64    | 10.75   | 21.93   |
-| 2048 | 128   | 12.13   | 30.64   |
-| 2048 | 256   | 18.66   | 62.75   |
-| 2048 | 512   | 35.56   | 131.99  |
-| 4096 | 1     | 3.91    | 7.80    |
-| 4096 | 32    | 10.55   | 21.66   |
-| 4096 | 64    | 12.27   | 30.75   |
-| 4096 | 128   | 18.89   | 63.19   |
-| 4096 | 256   | 35.32   | 132.48  |
-| 4096 | 512   | 65.39   | 254.43  |
+GoLU (Gompertz Linear Unit) is a novel self-gated activation function defined as:
 
+```
+GoLU(x) = x * Gompertz(x)
+where Gompertz(x) = e^(-e^(-x))
+```
 
+This implementation provides a Triton-based kernel for efficient computation of GoLU and its gradients.
+
+## Performance Benchmarks
+
+Below are benchmarks comparing forward and backward pass times across different input sizes and batch sizes:
+
+[benchmark table here]
+
+## Installation
+
+```bash
+pip install triton
+pip install torch
+```
+
+## Usage
+
+### Basic Usage
+```python
+import torch
+import torch.nn as nn
+from golu_triton import GoLUTriton
+
+# Create a simple model
+class SimpleModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.fc = nn.Linear(128, 128)
+        self.activation = GoLUTriton()  # default parameters (alpha=1.0, beta=1.0, gamma=1.0)
+    
+    def forward(self, x):
+        x = self.fc(x)
+        x = self.activation(x)
+        return x
+
+# Use the model
+model = SimpleModel().cuda()
+x = torch.randn(1, 128).cuda()
+output = model(x)
+```
+
+### With Custom Parameters
+```python
+# Initialize with custom parameters
+activation = GoLUTriton(alpha=0.8, beta=1.2, gamma=0.9)
+```
+
+## Implementation Details
+
+The implementation consists of two main components:
+
+1. Forward Pass Kernel:
+   - Handles both full and low precision (fp16/bf16) computation
+   - Automatically handles type conversion and memory management
+   - Optimized for different input sizes through adaptive block sizing
+
+2. Backward Pass Kernel:
+   - Implements gradient computation for backpropagation
+   - Includes numerical stability improvements
+   - Handles edge cases and NaN prevention
+
+### Key Features
+
+- Automatic precision handling (fp32, fp16, bf16)
+- Optimized memory access patterns
+- Automatic block size selection
+- Numerically stable gradient computation
+- Efficient parallel execution
