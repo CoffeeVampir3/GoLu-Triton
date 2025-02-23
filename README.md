@@ -1,6 +1,6 @@
 Based on the paper [Gompertz Linear Units: Leveraging Asymmetry for Enhanced Learning Dynamics](https://arxiv.org/abs/2502.03654)
 
-This is largely a port of the [automl cuda kernel](https://github.com/automl/GoLU/tree/main)
+This is largely a port of the [automl GoLu cuda kernel](https://github.com/automl/GoLU/tree/main)
 
 # GoLU Triton Benchmark
 
