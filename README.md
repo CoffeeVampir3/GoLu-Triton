@@ -2,7 +2,7 @@ Based on the paper [Gompertz Linear Units: Leveraging Asymmetry for Enhanced Lea
 
 This is largely a port of the [automl GoLu cuda kernel](https://github.com/automl/GoLU/tree/main)
 
-# GoLU Triton Benchmark
+# Sample GoLU Triton Benchmark (triton_bench.py)
 
 | Size | Batch | Fwd(μs) | Bwd(μs) |
 |------|-------|---------|---------|
