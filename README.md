@@ -4,6 +4,8 @@ Based on the paper [Gompertz Linear Units: Leveraging Asymmetry for Enhanced Lea
 
 Largely a port of the automl cuda kernel to triton [automl GoLu cuda kernel](https://github.com/automl/GoLU/tree/main)
 
+Supports fp32 and automatic fp16/bf16 upcasting.
+
 ## Overview
 
 GoLU (Gompertz Linear Unit) is a novel self-gated activation function defined as:
@@ -53,25 +55,3 @@ output = model(x)
 # Initialize with custom parameters
 activation = GoLUTriton(alpha=0.8, beta=1.2, gamma=0.9)
 ```
-
-## Implementation Details
-
-The implementation consists of two main components:
-
-1. Forward Pass Kernel:
-   - Handles both full and low precision (fp16/bf16) computation
-   - Automatically handles type conversion and memory management
-   - Optimized for different input sizes through adaptive block sizing
-
-2. Backward Pass Kernel:
-   - Implements gradient computation for backpropagation
-   - Includes numerical stability improvements
-   - Handles edge cases and NaN prevention
-
-### Key Features
-
-- Automatic precision handling (fp32, fp16, bf16)
-- Optimized memory access patterns
-- Automatic block size selection
-- Numerically stable gradient computation
-- Efficient parallel execution
