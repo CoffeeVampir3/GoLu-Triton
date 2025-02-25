@@ -15,12 +15,6 @@ where Gompertz(x) = e^(-e^(-x))
 
 This implementation provides a Triton-based kernel for efficient computation of GoLU and its gradients.
 
-## Performance Benchmarks
-
-Below are benchmarks comparing forward and backward pass times across different input sizes and batch sizes:
-
-[benchmark table here]
-
 ## Installation
 
 ```bash
