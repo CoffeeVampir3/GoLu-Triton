@@ -31,8 +31,6 @@ pip install torch
 import torch
 import torch.nn as nn
 from golu_triton import GoLUTriton
-
-# Create a simple model
 class SimpleModel(nn.Module):
     def __init__(self):
         super().__init__()
@@ -44,7 +42,6 @@ class SimpleModel(nn.Module):
         x = self.activation(x)
         return x
 
-# Use the model
 model = SimpleModel().cuda()
 x = torch.randn(1, 128).cuda()
 output = model(x)
@@ -52,6 +49,5 @@ output = model(x)
 
 ### With Custom Parameters
 ```python
-# Initialize with custom parameters
 activation = GoLUTriton(alpha=0.8, beta=1.2, gamma=0.9)
 ```
